@@ -10,6 +10,7 @@ const initialState = {
   showingItems: [],
   notMatchCallback: false,
   twoLastItemSelectedId: [],
+  pending: false,
 };
 const reducer = (state, action) => {
   switch (action.type) {
@@ -17,6 +18,10 @@ const reducer = (state, action) => {
       return { ...state, memoryItems: action.value };
     }
     case "selectItem": {
+      if (state.pending) {
+        return state;
+      }
+
       let cloneState = { ...state };
       const data = action.value;
 
@@ -68,6 +73,7 @@ const reducer = (state, action) => {
               showingItems: [...state.showingItems, data.id],
               notMatchCallback: !state.notMatchCallback,
               twoLastItemSelectedId: [firstItemObject.id, data.id],
+              pending: true,
             };
           }
           return {
@@ -89,7 +95,7 @@ const reducer = (state, action) => {
       return state;
     }
     case "cleanNotMatchItem": {
-      return { ...state, showingItems: [...action.value] };
+      return { ...state, showingItems: [...action.value], pending: false };
     }
     default:
       return state;
@@ -100,7 +106,6 @@ const Container = () => {
   const [memoryState, dispatch] = useReducer(reducer, initialState);
 
   const selectItemHandler = (itemNumber) => {
-    console.log(itemNumber);
     dispatch({ type: "selectItem", value: itemNumber });
   };
 
@@ -113,9 +118,6 @@ const Container = () => {
       let filterShowingItems = prevShowingItems.filter((id) => {
         return !memoryState.twoLastItemSelectedId.includes(id);
       });
-      console.log(`prev show items ${prevShowingItems}`);
-      console.log(`two last item ${memoryState.twoLastItemSelectedId}`);
-      console.log(filterShowingItems);
       setTimeout(() => {
         dispatch({ type: "cleanNotMatchItem", value: filterShowingItems });
       }, 1000);
