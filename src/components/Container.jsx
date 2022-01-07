@@ -8,6 +8,8 @@ const initialState = {
   isMatched: { firstItem: null, secondItem: null },
   totalMoves: 0,
   showingItems: [],
+  notMatchCallback: false,
+  twoLastItemSelectedId: [],
 };
 const reducer = (state, action) => {
   switch (action.type) {
@@ -38,6 +40,7 @@ const reducer = (state, action) => {
           if (isIdInShowingItems) {
             return state;
           } else if (!isIdInShowingItems && match) {
+            // show matches item
             return {
               ...state,
               isMatched: {
@@ -51,11 +54,7 @@ const reducer = (state, action) => {
               showingItems: [...state.showingItems, data.id],
             };
           } else if (!isIdInShowingItems && !match) {
-            console.log('not match function is running');
-            let prevShowingItems = [...state.showingItems];
-            let filterShowingItems = prevShowingItems.filter((id) => {
-              return state.isMatched.firstItem.id !== id;
-            });
+            // in first run we execute this function but after we modify state with another function
             return {
               ...state,
               isMatched: {
@@ -66,7 +65,9 @@ const reducer = (state, action) => {
               pairsMatched: match
                 ? cloneState.pairsMatched + 1
                 : cloneState.pairsMatched,
-              showingItems: filterShowingItems,
+              showingItems: [...state.showingItems, data.id],
+              notMatchCallback: !state.notMatchCallback,
+              twoLastItemSelectedId: [firstItemObject.id, data.id],
             };
           }
           return {
@@ -87,7 +88,9 @@ const reducer = (state, action) => {
 
       return state;
     }
-
+    case "cleanNotMatchItem": {
+      return { ...state, showingItems: [...action.value] };
+    }
     default:
       return state;
   }
@@ -95,12 +98,29 @@ const reducer = (state, action) => {
 
 const Container = () => {
   const [memoryState, dispatch] = useReducer(reducer, initialState);
-  const [state, setState] = useState(false);
 
   const selectItemHandler = (itemNumber) => {
     console.log(itemNumber);
     dispatch({ type: "selectItem", value: itemNumber });
   };
+
+  useEffect(() => {
+    // this function should be run after two second
+    // Do not show if two items not match
+
+    if (memoryState.twoLastItemSelectedId.length !== 0) {
+      let prevShowingItems = [...memoryState.showingItems];
+      let filterShowingItems = prevShowingItems.filter((id) => {
+        return !memoryState.twoLastItemSelectedId.includes(id);
+      });
+      console.log(`prev show items ${prevShowingItems}`);
+      console.log(`two last item ${memoryState.twoLastItemSelectedId}`);
+      console.log(filterShowingItems);
+      setTimeout(() => {
+        dispatch({ type: "cleanNotMatchItem", value: filterShowingItems });
+      }, 1000);
+    }
+  }, [memoryState.notMatchCallback]);
 
   useEffect(() => {
     let memoryItemArray = [];
