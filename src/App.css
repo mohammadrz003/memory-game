@@ -1,3 +1,5 @@
 body {
-  background-color: #082032;
+    background-image: url("./assets/home/nature-background.jpg");
+    background-repeat: no-repeat;
+    background-size: cover;
 }

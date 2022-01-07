@@ -1,6 +1,6 @@
 import { useState, useEffect, useReducer } from "react";
 import MemoryItem from "./MemoryItem";
-import data from "../data.json";
+import data from "../../data.json";
 
 const initialState = {
   memoryItems: [],
@@ -102,7 +102,7 @@ const reducer = (state, action) => {
   }
 };
 
-const Container = () => {
+const MemoryGame = () => {
   const [memoryState, dispatch] = useReducer(reducer, initialState);
 
   const selectItemHandler = (itemNumber) => {
@@ -155,31 +155,33 @@ const Container = () => {
   }, []);
 
   return (
-    <div className="p-6 mx-auto mt-10 rounded-lg w-fit bg-secondery-200">
-      <div className="grid grid-cols-4 grid-rows-4 gap-3">
-        {memoryState.memoryItems.map((element, index) => {
-          return (
-            <MemoryItem
-              key={element.id}
-              memoryState={memoryState}
-              item={element}
-              onSelectItem={() => selectItemHandler(element)}
-            />
-          );
-        })}
+    <section className="w-screen min-h-screen flex justify-center items-center">
+      <div className="p-6 rounded-lg w-fit bg-secondery-200">
+        <div className="grid grid-cols-4 grid-rows-4 gap-3">
+          {memoryState.memoryItems.map((element, index) => {
+            return (
+              <MemoryItem
+                key={element.id}
+                memoryState={memoryState}
+                item={element}
+                onSelectItem={() => selectItemHandler(element)}
+              />
+            );
+          })}
+        </div>
+        <div className="flex justify-between pt-4 text-gray-300">
+          <h4>
+            Pairs matched:{" "}
+            <span className="text-primary">{memoryState.pairsMatched}</span>
+          </h4>
+          <h4>
+            Total Moves:{" "}
+            <span className="text-primary">{memoryState.totalMoves}</span>
+          </h4>
+        </div>
       </div>
-      <div className="flex justify-between pt-4 text-gray-300">
-        <h4>
-          Pairs matched:{" "}
-          <span className="text-primary">{memoryState.pairsMatched}</span>
-        </h4>
-        <h4>
-          Total Moves:{" "}
-          <span className="text-primary">{memoryState.totalMoves}</span>
-        </h4>
-      </div>
-    </div>
+    </section>
   );
 };
 
-export default Container;
+export default MemoryGame;

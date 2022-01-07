@@ -1,0 +1,6 @@
+.button {
+  width: 207px;
+  background-image: url("../../assets/home/button.png");
+  background-repeat: no-repeat;
+  background-size: cover;
+}
