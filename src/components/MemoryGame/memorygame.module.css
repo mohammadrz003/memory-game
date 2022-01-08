@@ -1,0 +1,27 @@
+.gameMainBox {
+    background: url("../../assets/game/gameWoodBox.svg");
+    background-repeat: no-repeat;
+    background-size: 100%;
+    background-position: center center;
+}
+
+/* how make height equal width in css grid */
+.gameGridBox {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  grid-template-rows: 1fr 1fr 1fr 1fr;
+  grid-gap: 15px;
+}
+
+.gameGridBox::before {
+  content: "";
+  width: 0;
+  padding-bottom: 100%;
+  grid-row: 1 / 1;
+  grid-column: 1 / 1;
+}
+
+.gameGridBox > *:first-child {
+  grid-row: 1 / 1;
+  grid-column: 1 / 1;
+}

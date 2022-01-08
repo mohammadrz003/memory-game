@@ -1,6 +1,9 @@
 import { useState, useEffect, useReducer } from "react";
 import MemoryItem from "./MemoryItem";
+import styles from "./memorygame.module.css";
 import data from "../../data.json";
+import GameInfo from "./GameInfo";
+import GameAction from "./GameAction";
 
 const initialState = {
   memoryItems: [],
@@ -155,30 +158,34 @@ const MemoryGame = () => {
   }, []);
 
   return (
-    <section className="w-screen min-h-screen flex justify-center items-center">
-      <div className="p-6 rounded-lg w-fit bg-secondery-200">
-        <div className="grid grid-cols-4 grid-rows-4 gap-3">
-          {memoryState.memoryItems.map((element, index) => {
-            return (
-              <MemoryItem
-                key={element.id}
-                memoryState={memoryState}
-                item={element}
-                onSelectItem={() => selectItemHandler(element)}
-              />
-            );
-          })}
+    <section className="container mx-auto w-screen min-h-screen flex justify-center items-center">
+      <div className="w-full flex flex-col items-center lg:flex-row lg:justify-around lg:items-start">
+        <GameInfo />
+        <div className={`${styles.gameMainBox} w-full md:w-2/3 lg:w-1/3 p-8 rounded-lg`}>
+          <div className={`${styles.gameGridBox}`}>
+            {memoryState.memoryItems.map((element, index) => {
+              return (
+                <MemoryItem
+                  key={element.id}
+                  memoryState={memoryState}
+                  item={element}
+                  onSelectItem={() => selectItemHandler(element)}
+                />
+              );
+            })}
+          </div>
+          {/* <div className="flex justify-between pt-4 text-gray-300">
+            <h4>
+              Pairs matched:{" "}
+              <span className="text-primary">{memoryState.pairsMatched}</span>
+            </h4>
+            <h4>
+              Total Moves:{" "}
+              <span className="text-primary">{memoryState.totalMoves}</span>
+            </h4>
+          </div> */}
         </div>
-        <div className="flex justify-between pt-4 text-gray-300">
-          <h4>
-            Pairs matched:{" "}
-            <span className="text-primary">{memoryState.pairsMatched}</span>
-          </h4>
-          <h4>
-            Total Moves:{" "}
-            <span className="text-primary">{memoryState.totalMoves}</span>
-          </h4>
-        </div>
+        <GameAction />
       </div>
     </section>
   );

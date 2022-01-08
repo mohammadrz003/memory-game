@@ -1,0 +1,6 @@
+.squareButton {
+  background: url("../../assets/game/squareWoodButton.svg");
+  background-repeat: no-repeat;
+  background-size: 100%;
+  background-position: center center;
+}
