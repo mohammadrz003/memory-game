@@ -1,7 +1,7 @@
 import { useState, useEffect, useReducer } from "react";
 import MemoryItem from "./MemoryItem";
 import styles from "./memorygame.module.css";
-import data from "../../data.json";
+import data from "../../data";
 import GameInfo from "./GameInfo";
 import GameAction from "./GameAction";
 
@@ -14,6 +14,7 @@ const initialState = {
   notMatchCallback: false,
   twoLastItemSelectedId: [],
   pending: false,
+  resetGame: false,
 };
 const reducer = (state, action) => {
   switch (action.type) {
@@ -100,6 +101,8 @@ const reducer = (state, action) => {
     case "cleanNotMatchItem": {
       return { ...state, showingItems: [...action.value], pending: false };
     }
+    case "resetGame":
+      return { ...initialState, resetGame: !state.resetGame };
     default:
       return state;
   }
@@ -155,13 +158,37 @@ const MemoryGame = () => {
     }
 
     dispatch({ type: "setMemoryItem", value: items });
-  }, []);
+  }, [memoryState.resetGame]);
+
+  const resetGameHandler = () => {
+    dispatch({ type: "resetGame" });
+  };
 
   return (
     <section className="container mx-auto w-screen min-h-screen flex justify-center items-center">
-      <div className="w-full flex flex-col items-center lg:flex-row lg:justify-around lg:items-start">
-        <GameInfo />
-        <div className={`${styles.gameMainBox} w-full md:w-2/3 lg:w-1/3 p-8 rounded-lg`}>
+      <div className="w-full flex flex-col items-center space-y-4">
+        {/* <GameInfo
+          totalMoves={memoryState.totalMoves}
+          matchedItem={memoryState.pairsMatched}
+        /> */}
+
+        <div className="flex flex-col items-center text-secondery-100">
+          <p>
+            Total Moves:{" "}
+            <span className="text-primary font-bold">
+              {memoryState.totalMoves}
+            </span>
+          </p>
+          <p>
+            Pairs Matched:{" "}
+            <span className="text-primary font-bold">
+              {memoryState.pairsMatched}/8
+            </span>
+          </p>
+        </div>
+        <div
+          className={`${styles.gameMainBox} w-full md:w-2/3 lg:w-1/3 p-8 rounded-lg`}
+        >
           <div className={`${styles.gameGridBox}`}>
             {memoryState.memoryItems.map((element, index) => {
               return (
@@ -174,18 +201,8 @@ const MemoryGame = () => {
               );
             })}
           </div>
-          {/* <div className="flex justify-between pt-4 text-gray-300">
-            <h4>
-              Pairs matched:{" "}
-              <span className="text-primary">{memoryState.pairsMatched}</span>
-            </h4>
-            <h4>
-              Total Moves:{" "}
-              <span className="text-primary">{memoryState.totalMoves}</span>
-            </h4>
-          </div> */}
         </div>
-        <GameAction />
+        <GameAction onResetGame={resetGameHandler} />
       </div>
     </section>
   );
